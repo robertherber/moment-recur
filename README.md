@@ -1,5 +1,6 @@
 moment-recur
 =====
+[ ![Codeship Status for robertherber/moment-recur](https://app.codeship.com/projects/cc1ec7b0-e8df-0135-f6f9-0a40330e9728/status?branch=master)](https://app.codeship.com/projects/269794)
 moment-recur is a recurring date plugin for [momentjs](http://momentjs.com/). This plugin handles dates only; time information is discarded.
 
 The rule matching concept is borrowed from the excellent [node-date-recur](https://github.com/appsattic/node-date-recur) library created by Andrew Chilton.
@@ -211,7 +212,7 @@ var valentines = moment.recur().every(14).daysOfMonth()
 // A weekOfMonthByDay interval is available for combining with
 // the daysOfWeek to achieve "nth weekday of month" recurrences.
 // The following matches every 1st and 3rd Thursday of the month.
-// (Note this cannot be combined at the moment with every(x).months() expression) 
+// (Note this cannot be combined at the moment with every(x).months() expression)
 cal = moment.recur().every("Thursday").daysOfWeek()
                     .every([0, 2]).weeksOfMonthByDay();
 
@@ -278,7 +279,7 @@ recurrence = moment("01/01/2014").recur().every(2).days();
 
 // Generate the next three dates as moments
 // Outputs: [moment("01/03/2014"), moment("01/05/2014"), moment("01/07/2014")]
-nextDates = recurrence.next(3); 
+nextDates = recurrence.next(3);
 
 // Generate the next three dates, formatted in local format
 // Outputs: ["01/03/2014", "01/05/2014", "01/07/2014"]
@@ -353,10 +354,10 @@ Use `repeats()` to check if a recurrence has rules set.
 recurrence.repeats(); // true/false
 ```
 
-Use `save()` to export all options, rules, and exceptions as an object. This can be used to store recurrences in a database.  
+Use `toJSON()` or `save()` to export all options, rules, and exceptions as an object. This can be used to store recurrences in a database.  
 **Note:** This does not export the "From Date" which is considered a temporary option.
 ```js
-recurrence.save();
+recurrence.toJSON();
 ```
 
 ### momentjs Functions
