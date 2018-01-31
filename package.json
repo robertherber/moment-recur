@@ -33,6 +33,7 @@
     "run-sequence": "~1.0.2"
   },
   "scripts": {
-    "test": "jasmine && eslint ./moment-recur && eslint ./spec"
+    "test": "jasmine && eslint ./moment-recur && eslint ./spec",
+    "prepublish": "npm test"
   }
 }
