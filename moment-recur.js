@@ -34,6 +34,8 @@
         }
 
         function matchInterval(type, units, start, date) {
+            start = moment(moment(start).format('L'));
+            date = moment(moment(date).format('L'));
             // Get the difference between the start date and the provided date,
             // using the required measure based on the type of rule'
             var diff = null;
@@ -316,7 +318,7 @@
                     date = format ? currentDate.format(format) : currentDate.clone();
                     dates.push(date);
                 }
-                if(currentDate >= this.end) {
+                if(type === "all" && currentDate >= this.end) {
                     break;
                 }
             }
@@ -358,7 +360,7 @@
         // Private function to check if a date is an exception
         function isException(exceptions, date) {
             for (var i = 0, len = exceptions.length; i < len; i++) {
-                if (moment(exceptions[i]).isSame(date)) {
+                if (moment(exceptions[i]).isSameDate(date)) {
                     return true;
                 }
             }
@@ -443,11 +445,11 @@
         // Recur Object Constrcutor
         var Recur = function(options) {
             if (options.start) {
-                this.start = moment(options.start).dateOnly();
+                this.start = moment(options.start);
             }
 
             if (options.end) {
-                this.end = moment(options.end).dateOnly();
+                this.end = moment(options.end);
             }
 
             // Our list of rules, all of which must match
@@ -480,7 +482,7 @@
             }
 
             if (date) {
-                this.start = moment(date).dateOnly();
+                this.start = moment(date);
                 return this;
             }
 
@@ -495,7 +497,7 @@
             }
 
             if (date) {
-                this.end = moment(date).dateOnly();
+                this.end = moment(date);
                 return this;
             }
 
@@ -510,7 +512,7 @@
             }
 
             if (date) {
-                this.from = moment(date).dateOnly();
+                this.from = moment(date);
                 return this;
             }
 
@@ -518,7 +520,7 @@
         };
 
         // Export the settings, rules, and exceptions of this recurring date
-        Recur.prototype.save = function() {
+        Recur.prototype.toJSON = Recur.prototype.save = function() {
             var data = {};
 
             if (this.start && moment(this.start).isValid()) {
@@ -529,10 +531,7 @@
                 data.end = this.end.format("L");
             }
 
-            data.exceptions = [];
-            for (var i = 0, len = this.exceptions.length; i < len; i++) {
-                data.exceptions.push(this.exceptions[i].format("L"));
-            }
+            data.exceptions = this.exceptions;
 
             data.rules = this.rules;
 
@@ -564,7 +563,7 @@
 
         // Creates an exception date to prevent matches, even if rules match
         Recur.prototype.except = function(date) {
-            date = moment(date).dateOnly();
+            date = moment(date).format('L');
             this.exceptions.push(date);
             return this;
         };
@@ -576,9 +575,8 @@
 
             // If valid date, try to remove it from exceptions
             if (whatMoment.isValid()) {
-                whatMoment = whatMoment.dateOnly(); // change to date only for perfect comparison
                 for (i = 0, len = this.exceptions.length; i < len; i++) {
-                    if (whatMoment.isSame(this.exceptions[i])) {
+                    if (whatMoment.isSameDate(this.exceptions[i])) {
                         this.exceptions.splice(i, 1);
                         return this;
                     }
@@ -608,7 +606,7 @@
 
         // Attempts to match a date to the rules
         Recur.prototype.matches = function(dateToMatch, ignoreStartEnd) {
-            var date = moment(dateToMatch).dateOnly();
+            var date = moment(dateToMatch);
 
             if (!date.isValid()) {
                 throw Error("Invalid date supplied to match method: " + dateToMatch);
@@ -714,14 +712,12 @@
         return Math.floor((this.date()-1)/7);
     };
 
-    // Plugin for removing all time information from a given date
-    moment.fn.dateOnly = function() {
-        if (this.tz && typeof(moment.tz) == 'function') {
-            return moment.tz(this.format('YYYY-MM-DD[T]00:00:00Z'), 'UTC');
-        } else {
-            return this.hours(0).minutes(0).seconds(0).milliseconds(0).add(this.utcOffset(), "minute").utcOffset(0);
-        }
-    };
+    moment.fn.isSameDate = function(otherDate) {
+      const formattedAsString = moment(otherDate).format('L'),
+            thisFormattedAsString = this.format('L');
+
+      return formattedAsString === thisFormattedAsString; //just compare date string - handled by each respective timezone
+    }
 
     return moment;
 }));

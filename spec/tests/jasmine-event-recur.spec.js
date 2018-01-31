@@ -1,8 +1,8 @@
 'use strict';
 
-// Getting rid of jshint warnings (the yellow lines and exclaimation points are annoying)
-var jasmine = jasmine, describe = describe, it = it, moment = moment, expect = expect, beforeEach = beforeEach;
-
+const moment = require('moment');
+require('moment-timezone');
+require('../../moment-recur');
 
 // TOTEST:
 // Export Rules
@@ -183,8 +183,12 @@ describe("The Calendar Interval", function() {
 
         it("should work with timezones", function () {
             var recurrence = moment.tz('2015-01-25',"America/Vancouver").recur().every(["Sunday", 1]).daysOfWeek();
-            var check = moment.tz('2015-02-01',"Asia/Hong_Kong");
-            expect(recurrence.matches(check)).toBe(true);
+            var recurrence2 = moment.tz('2015-01-25',"Asia/Hong_Kong").recur().every(["Sunday", 1]).daysOfWeek();
+            var recurrence3 = moment.tz('2015-01-25',"Pacific/Funafuti").recur().every(["Sunday", 1]).daysOfWeek();
+            var recurrence4 = moment.tz('2015-01-25',"Pacific/Wallis").recur().every(["Sunday", 1]).daysOfWeek();
+            expect(recurrence.toJSON()).toEqual(recurrence2.toJSON());
+            expect(recurrence3.toJSON()).toEqual(recurrence4.toJSON());
+            expect(recurrence.toJSON()).toEqual(recurrence4.toJSON());
         });
     });
 
@@ -425,7 +429,8 @@ describe('Exceptions with weeks', function() {
         expect(recur.matches(exception)).toBe(false);
     });
 
-    it('should not match on the exception day', function() {
+    it('should not match on the exception day for other timezone', function() {
+      console.log('moment of TRUTH')
         expect(recur.matches(exceptionWithTz)).toBe(true);
         recur.except(exception);
         expect(recur.matches(exceptionWithTz)).toBe(false);
@@ -451,9 +456,19 @@ describe("Options", function() {
         expect(recurrence.matches("01/05/2014")).toBe(false);
     });
 
-    it("shold be exportable", function() {
+    it("should be exportable with save", function() {
         var recurrence = moment("01/01/2014").recur("12/31/2014").every(2, "days").except("01/05/2014");
         var data = recurrence.save();
+        expect(data.start).toBe("01/01/2014");
+        expect(data.end).toBe("12/31/2014");
+        expect(data.exceptions[0]).toBe("01/05/2014");
+        expect(data.rules[0].units[2]).toBe(true);
+        expect(data.rules[0].measure).toBe("days");
+    });
+
+    it("shold be exportable with toJSON", function() {
+        var recurrence = moment("01/01/2014").recur("12/31/2014").every(2, "days").except("01/05/2014");
+        var data = recurrence.toJSON();
         expect(data.start).toBe("01/01/2014");
         expect(data.end).toBe("12/31/2014");
         expect(data.exceptions[0]).toBe("01/05/2014");
