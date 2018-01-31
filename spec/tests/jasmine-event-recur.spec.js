@@ -461,7 +461,7 @@ describe("Options", function() {
         var data = recurrence.save();
         expect(data.start).toBe("01/01/2014");
         expect(data.end).toBe("12/31/2014");
-        expect(data.exceptions[0]).toBe("01/05/2014");
+        expect(data.exceptions[0]).toBe("2014-01-05");
         expect(data.rules[0].units[2]).toBe(true);
         expect(data.rules[0].measure).toBe("days");
     });
@@ -471,7 +471,7 @@ describe("Options", function() {
         var data = recurrence.toJSON();
         expect(data.start).toBe("01/01/2014");
         expect(data.end).toBe("12/31/2014");
-        expect(data.exceptions[0]).toBe("01/05/2014");
+        expect(data.exceptions[0]).toBe("2014-01-05");
         expect(data.rules[0].units[2]).toBe(true);
         expect(data.rules[0].measure).toBe("days");
     });

@@ -7,6 +7,7 @@
         root.moment = factory(root.moment);
     }
 }(this, function (moment) {
+    var dateFormat = 'YYYY-MM-DD';
     var hasModule;
 
     hasModule = (typeof module !== "undefined" && module !== null) && (module.exports != null);
@@ -34,8 +35,8 @@
         }
 
         function matchInterval(type, units, start, date) {
-            start = moment(moment(start).format('L'));
-            date = moment(moment(date).format('L'));
+            start = moment(moment(start).format(dateFormat));
+            date = moment(moment(date).format(dateFormat));
             // Get the difference between the start date and the provided date,
             // using the required measure based on the type of rule'
             var diff = null;
@@ -563,7 +564,7 @@
 
         // Creates an exception date to prevent matches, even if rules match
         Recur.prototype.except = function(date) {
-            date = moment(date).format('L');
+            date = moment(date).format(dateFormat);
             this.exceptions.push(date);
             return this;
         };
@@ -713,8 +714,8 @@
     };
 
     moment.fn.isSameDate = function(otherDate) {
-      const formattedAsString = moment(otherDate).format('L'),
-            thisFormattedAsString = this.format('L');
+      const formattedAsString = moment(otherDate).format(dateFormat),
+            thisFormattedAsString = this.format(dateFormat);
 
       return formattedAsString === thisFormattedAsString; //just compare date string - handled by each respective timezone
     }
