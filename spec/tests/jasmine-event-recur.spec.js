@@ -229,6 +229,42 @@ describe('The Calendar Interval', function () {
     expect(recurrence.matches(moment('2015-02-15'))).toBe(false);
   });
 
+  it('daysOfMonth should recur on 31st or last day of month', function () {
+    var recurrence = moment('2012-01-31').recur().every(31)
+      .daysOfMonth();
+
+    var upcoming = recurrence.next(13);
+
+    expect(upcoming[0].toISOString()).toBe(moment('2012-02-29').toISOString());
+    expect(upcoming[1].toISOString()).toBe(moment('2012-03-31').toISOString());
+    expect(upcoming[2].toISOString()).toBe(moment('2012-04-30').toISOString());
+    expect(upcoming[12].toISOString()).toBe(moment('2013-02-28').toISOString());
+  });
+
+  it('daysOfMonth should recur on 30th or last day of month', function () {
+    var recurrence = moment('2012-01-31').recur().every(30)
+      .daysOfMonth();
+
+    var upcoming = recurrence.next(13);
+
+    expect(upcoming[0].toISOString()).toBe(moment('2012-02-29').toISOString());
+    expect(upcoming[1].toISOString()).toBe(moment('2012-03-30').toISOString());
+    expect(upcoming[2].toISOString()).toBe(moment('2012-04-30').toISOString());
+    expect(upcoming[12].toISOString()).toBe(moment('2013-02-28').toISOString());
+  });
+
+  it('daysOfMonth should recur on 29th or last day of month', function () {
+    var recurrence = moment('2012-01-31').recur().every(29)
+      .daysOfMonth();
+
+    var upcoming = recurrence.next(13);
+
+    expect(upcoming[0].toISOString()).toBe(moment('2012-02-29').toISOString());
+    expect(upcoming[1].toISOString()).toBe(moment('2012-03-29').toISOString());
+    expect(upcoming[2].toISOString()).toBe(moment('2012-04-29').toISOString());
+    expect(upcoming[12].toISOString()).toBe(moment('2013-02-28').toISOString());
+  });
+
   it('weeksOfMonth should work', function () {
     var recurrence = moment.recur().every([1, 3]).weeksOfMonth();
 

@@ -162,7 +162,7 @@
       }
 
       // match on end of month days
-      if (unitType === 'date' && unit === date.add(1, 'months').date(0).format('D') && unit < 31) {
+      if (unitType === 'date' && unit > parseInt(date.clone().add(1, 'day').format('D'), 10) && unit < 31) {
         while (unit <= 31) {
           if (list[unit]) {
             return true;
