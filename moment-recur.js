@@ -323,7 +323,13 @@
         }
       }
 
-      return dates;
+      var timeOfDay = this.timeOfDay;
+
+      var newDates = timeOfDay
+        ? dates.map(function (d) { return d.add(timeOfDay, 'milliseconds'); })
+        : dates;
+
+      return newDates;
     }
 
 
@@ -451,11 +457,16 @@
     // Recur Object Constrcutor
     Recur = function (options) {
       if (options.start) {
-        this.start = moment(options.start);
+        this.start = moment(options.start).startOf('day');
+        this.timeOfDay = moment(options.start).valueOf() - this.start.valueOf();
+      }
+
+      if (options.timeOfDay) {
+        this.timeOfDay = options.timeOfDay;
       }
 
       if (options.end) {
-        this.end = moment(options.end);
+        this.end = moment(options.end).startOf('day');
       }
 
       // Our list of rules, all of which must match
@@ -488,7 +499,8 @@
       }
 
       if (date) {
-        this.start = moment(date);
+        this.start = moment(date).startOf('day');
+        this.timeOfDay = moment(date).valueOf() - this.start.valueOf();
         return this;
       }
 
@@ -503,7 +515,7 @@
       }
 
       if (date) {
-        this.end = moment(date);
+        this.end = moment(date).startOf('day');
         return this;
       }
 
@@ -518,7 +530,7 @@
       }
 
       if (date) {
-        this.from = moment(date);
+        this.from = moment(date).startOf('day');
         return this;
       }
 
@@ -528,6 +540,10 @@
     // Export the settings, rules, and exceptions of this recurring date
     Recur.prototype.save = function () {
       var data = {};
+
+      if (this.timeOfDay || this.timeOfDay === 0) {
+        data.timeOfDay = this.timeOfDay;
+      }
 
       if (this.start && moment(this.start).isValid()) {
         data.start = this.start.format(dateFormat);

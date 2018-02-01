@@ -374,6 +374,24 @@ describe('Future Dates', function () {
     expect(nextDates[1]).toBe('2014-02-08');
     expect(nextDates[2]).toBe('2014-02-10');
   });
+
+  it('should use timeOfDay if applied', function () {
+    var recurrence = moment('2014-01-01')
+      .add(7, 'hours')
+      .recur().every(2)
+      .days();
+
+    recurrence.fromDate('2014-02-05');
+    var nextDates = recurrence.next(3);
+
+    expect(recurrence.start).toEqual(moment('2014-01-01'));
+    expect(recurrence.timeOfDay).toBe(25200000);
+
+    expect(nextDates.length).toBe(3);
+    expect(nextDates[0].toISOString()).toEqual(moment('2014-02-06').add(7, 'hours').toISOString());
+    expect(nextDates[1].toISOString()).toEqual(moment('2014-02-08').add(7, 'hours').toISOString());
+    expect(nextDates[2].valueOf()).toEqual(moment('2014-02-10').add(7, 'hours').valueOf());
+  });
 });
 
 describe('Previous Dates', function () {
@@ -501,6 +519,7 @@ describe('Options', function () {
     var recurrence = moment().recur({
       start: '2014-01-01',
       end: '2014-12-31',
+      timeOfDay: 500,
       rules: [
         { units: { 2: true }, measure: 'days' }
       ],
@@ -509,6 +528,7 @@ describe('Options', function () {
 
     expect(recurrence.startDate().format(dateFormat)).toBe('2014-01-01');
     expect(recurrence.endDate().format(dateFormat)).toBe('2014-12-31');
+    expect(recurrence.timeOfDay).toBe(500);
     expect(recurrence.rules.length).toBe(1);
     expect(recurrence.exceptions.length).toBe(1);
     expect(recurrence.matches('2014-01-03')).toBe(true);
@@ -520,6 +540,7 @@ describe('Options', function () {
     var data = recurrence.save();
 
     expect(data.start).toBe('2014-01-01');
+    expect(data.timeOfDay).toBe(0);
     expect(data.end).toBe('2014-12-31');
     expect(data.exceptions[0]).toBe('2014-01-05');
     expect(data.rules[0].units[2]).toBe(true);
@@ -532,9 +553,21 @@ describe('Options', function () {
 
     expect(data.start).toBe('2014-01-01');
     expect(data.end).toBe('2014-12-31');
+    expect(data.timeOfDay).toBe(0);
     expect(data.exceptions[0]).toBe('2014-01-05');
     expect(data.rules[0].units[2]).toBe(true);
     expect(data.rules[0].measure).toBe('days');
+  });
+
+  it('shold export timeOfDay as separate property', function () {
+    var recurrence = moment('2014-01-01').add(7, 'hours').add(50, 'minutes')
+      .recur('2014-12-31')
+      .every(2, 'days')
+      .except('2014-01-05');
+
+    var data = recurrence.toJSON();
+
+    expect(data.timeOfDay).toBe(28200000);
   });
 });
 
