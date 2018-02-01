@@ -388,6 +388,10 @@ describe('weeksOfMonthByDay()', function () {
 });
 
 describe('Future Dates', function () {
+  beforeEach(function () {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+  });
+
   it('can be generated', function () {
     var recurrence,
       nextDates;
@@ -398,6 +402,17 @@ describe('Future Dates', function () {
     expect(nextDates[0]).toBe('2014-01-03');
     expect(nextDates[1]).toBe('2014-01-05');
     expect(nextDates[2]).toBe('2014-01-07');
+  });
+
+  it('can be generated for 1000 years without timing out', function () {
+    var startTime = new Date();
+
+    var recurrence = moment('2014-01-01').recur().every(1).years();
+    var nextDates = recurrence.next(500);
+
+    expect(nextDates.length).toBe(500);
+
+    expect(new Date() - startTime).toBeLessThan(500); // to be under 1 second
   });
 
   it('will get first occurrence if no arguments are specified', function () {
@@ -666,5 +681,27 @@ describe('The hasRuleWithMeasure() function', function () {
 
     expect(recurrence.hasRuleWithMeasure('days')).toBe(true);
     expect(recurrence.hasRuleWithMeasure('months')).toBe(false);
+  });
+});
+
+describe('The allMeasures() function', function () {
+  it('should return all measures of recurrence', function () {
+    var recurrence = moment.recur().every(moment('01/01/2014').day()).daysOfWeek()
+      .every(moment('01/01/2014').monthWeekByDay())
+      .weeksOfMonthByDay();
+
+    expect(recurrence.allMeasures()).toEqual(['daysOfWeek', 'weeksOfMonthByDay']);
+  });
+
+  it('should return empty array when there are no rules', function () {
+    var recurrence = moment.recur();
+
+    expect(recurrence.allMeasures()).toEqual([]);
+  });
+
+  it('should return years as only measure', function () {
+    var recurrence = moment().recur().every(1, 'year');
+
+    expect(recurrence.allMeasures()).toEqual(['years']);
   });
 });

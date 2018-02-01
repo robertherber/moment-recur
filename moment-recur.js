@@ -269,8 +269,7 @@
 
     // Private method to get next, previous or all occurrences
     function getOccurrences(num, format, type) {
-      var currentDate,
-        date;
+      var currentDate;
       var dates = [];
 
       if (!(this instanceof Recur)) {
@@ -308,12 +307,32 @@
         }
       }
 
+      var allMeasures = this.allMeasures();
+      var biggestSafeMeasureToAdd = 'days';
+
+      for (var i = 0; i < allMeasures.length; i++) {
+        var measure = allMeasures[i];
+        if (measure === 'days' || measure === 'daysOfWeek' || measure === 'daysOfMonth') {
+          biggestSafeMeasureToAdd = 'days';
+          break;
+        } else if (measure === 'weeks' || biggestSafeMeasureToAdd === 'weeks' || biggestSafeMeasureToAdd === 'weeksOfMonth' || biggestSafeMeasureToAdd === 'weeksOfYear') {
+          biggestSafeMeasureToAdd = 'weeks';
+        } else if (measure === 'months' || biggestSafeMeasureToAdd === 'months' || biggestSafeMeasureToAdd === 'monthsOfYear') {
+          biggestSafeMeasureToAdd = 'months';
+        } else if (measure === 'years' || biggestSafeMeasureToAdd === 'years') {
+          biggestSafeMeasureToAdd = 'years';
+        } else {
+          biggestSafeMeasureToAdd = 'days';
+          break;
+        }
+      }
+
       // Get the next N dates, if num is null then infinite
       while (dates.length < (num === null ? dates.length + 1 : num)) {
         if (type === 'next' || type === 'all') {
-          currentDate.add(1, 'day');
+          currentDate.add(1, biggestSafeMeasureToAdd);
         } else {
-          currentDate.subtract(1, 'day');
+          currentDate.subtract(1, biggestSafeMeasureToAdd);
         }
 
         // Don't match outside the date if generating all dates within start/end
@@ -504,6 +523,15 @@
       this.from = null;
 
       return this;
+    };
+
+    Recur.prototype.allMeasures = function () {
+      return this.rules.map(function (r) { return r.measure; }).reduce(function (prev, current) {
+        if (prev.indexOf(current) > -1) {
+          return prev;
+        }
+        return prev.concat([current]);
+      }, []);
     };
 
     Recur.prototype.hasRuleWithMeasure = function (measure) {
