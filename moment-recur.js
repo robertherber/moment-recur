@@ -304,8 +304,7 @@
       // Include the initial date in the results if wanting all dates
       if (type === 'all') {
         if (this.matches(currentDate, false)) {
-          date = format ? currentDate.format(format) : currentDate.clone();
-          dates.push(date);
+          dates.push(currentDate.clone());
         }
       }
 
@@ -319,8 +318,7 @@
 
         // Don't match outside the date if generating all dates within start/end
         if (this.matches(currentDate, (type !== 'all'))) {
-          date = format ? currentDate.format(format) : currentDate.clone();
-          dates.push(date);
+          dates.push(currentDate.clone());
         }
         if (type === 'all' && currentDate >= this.end) {
           break;
@@ -329,8 +327,17 @@
 
       var timeOfDay = this.timeOfDay;
 
-      var newDates = timeOfDay
-        ? dates.map(function (d) { return d.add(timeOfDay, 'milliseconds'); })
+      var newDates = timeOfDay || format
+        ? dates.map(function (d) {
+          if (timeOfDay) {
+            d = d.add(timeOfDay, 'milliseconds');
+          }
+
+          if (format) {
+            return d.format(format);
+          }
+          return d;
+        })
         : dates;
 
       if (type !== 'all' && num === 1) {
