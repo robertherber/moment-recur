@@ -315,9 +315,9 @@
         if (measure === 'days' || measure === 'daysOfWeek' || measure === 'daysOfMonth') {
           biggestSafeMeasureToAdd = 'days';
           break;
-        } else if (measure === 'weeks' || biggestSafeMeasureToAdd === 'weeks' || biggestSafeMeasureToAdd === 'weeksOfMonth' || biggestSafeMeasureToAdd === 'weeksOfYear') {
+        } else if (measure === 'weeks' || biggestSafeMeasureToAdd === 'weeks' || measure === 'weeksOfMonth' || measure === 'weeksOfYear') {
           biggestSafeMeasureToAdd = 'weeks';
-        } else if (measure === 'months' || biggestSafeMeasureToAdd === 'months' || biggestSafeMeasureToAdd === 'monthsOfYear') {
+        } else if (measure === 'months' || biggestSafeMeasureToAdd === 'months' || measure === 'monthsOfYear') {
           biggestSafeMeasureToAdd = 'months';
         } else if (measure === 'years' || biggestSafeMeasureToAdd === 'years') {
           biggestSafeMeasureToAdd = 'years';

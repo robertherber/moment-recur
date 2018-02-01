@@ -1,6 +1,6 @@
 {
   "name": "@kingstinct/moment-recur",
-  "version": "1.0.13",
+  "version": "1.0.14",
   "description": "A momentjs plugin for matching and generating recurring dates.",
   "main": "moment-recur.js",
   "repository": {

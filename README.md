@@ -1,7 +1,7 @@
 moment-recur
 =====
 [ ![Codeship Status for robertherber/moment-recur](https://app.codeship.com/projects/cc1ec7b0-e8df-0135-f6f9-0a40330e9728/status?branch=master)](https://app.codeship.com/projects/269794)
-moment-recur is a recurring date plugin for [momentjs](http://momentjs.com/). This plugin handles dates only; time information is discarded.
+moment-recur is a recurring date plugin for [momentjs](http://momentjs.com/). This fork of the plugin handles time of day as well as dates. The time of day of the generated recurrences is based on the startDate.
 
 The rule matching concept is borrowed from the excellent [node-date-recur](https://github.com/appsattic/node-date-recur) library created by Andrew Chilton.
 
@@ -323,6 +323,7 @@ Set options upon creation. Note that the units for rules are converted to object
 moment().recur({
     start: "01/01/2014",
     end: "12/31/2014",
+    timeOfDay: 0,
     rules: [
         { units: {  2 : true }, measure: "days" }
     ],
@@ -366,9 +367,9 @@ The `monthWeek()` method can be used to determine the week of the month a date i
 moment("01/01/2014").monthWeek(); // 0
 ```
 
-The `dateOnly()` method can be used to remove any time information from a moment.
+The `isSameDate()` method can be used to determine if two moment instances are on the same date.
 ```js
-moment("2014-01-01 09:30:26").dateOnly(); // 01/01/2014 12:00:00 AM
+moment("01/01/2014").isSameDate(moment("01/01/2014")); // true
 ```
 
 License
