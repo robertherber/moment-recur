@@ -400,6 +400,22 @@ describe('Future Dates', function () {
     expect(nextDates[2]).toBe('2014-01-07');
   });
 
+  it('will get first occurrence if no arguments are specified', function () {
+    var recurrence;
+    recurrence = moment('2014-01-01').recur().every(2).days();
+    var nextDate = recurrence.next();
+
+    expect(nextDate.toISOString()).toBe(moment('2014-01-03').toISOString());
+  });
+
+  it('will not get array if 1 is specifed', function () {
+    var recurrence;
+    recurrence = moment('2014-01-01').recur().every(2).days();
+    var nextDate = recurrence.next(1);
+
+    expect(nextDate.toISOString()).toBe(moment('2014-01-03').toISOString());
+  });
+
   it("can start from a temporary 'from' date", function () {
     var recurrence = moment('2014-01-01').recur().every(2).days();
     recurrence.fromDate('2014-02-05');
@@ -439,6 +455,22 @@ describe('Previous Dates', function () {
     expect(nextDates[0]).toBe('2013-12-30');
     expect(nextDates[1]).toBe('2013-12-28');
     expect(nextDates[2]).toBe('2013-12-26');
+  });
+
+  it('will just get first occurrence if no arguments are specified', function () {
+    var recurrence;
+    recurrence = moment('2014-01-01').recur().every(2).days();
+    var nextDate = recurrence.previous();
+
+    expect(nextDate.toISOString()).toBe(moment('2013-12-30').toISOString());
+  });
+
+  it('will only get first date', function () {
+    var recurrence;
+    recurrence = moment('2014-01-01').recur().every(2).days();
+    var nextDate = recurrence.previous(1);
+
+    expect(nextDate.toISOString()).toBe(moment('2013-12-30').toISOString());
   });
 });
 
@@ -618,5 +650,21 @@ describe('The repeats() function', function () {
     var recurrence = moment().recur();
 
     expect(recurrence.repeats()).toBe(false);
+  });
+});
+
+describe('The hasRuleWithMeasure() function', function () {
+  it('should return true when there is a rule with that measure (singular)', function () {
+    var recurrence = moment().recur().every(1).days();
+
+    expect(recurrence.hasRuleWithMeasure('day')).toBe(true);
+    expect(recurrence.hasRuleWithMeasure('month')).toBe(false);
+  });
+
+  it('should return true when there is a rule with that measure (plural)', function () {
+    var recurrence = moment().recur().every(1).days();
+
+    expect(recurrence.hasRuleWithMeasure('days')).toBe(true);
+    expect(recurrence.hasRuleWithMeasure('months')).toBe(false);
   });
 });

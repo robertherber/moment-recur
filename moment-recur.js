@@ -289,6 +289,10 @@
         throw Error('Start date cannot be later than end date.');
       }
 
+      if (type !== 'all' && num === undefined) {
+        num = 1;
+      }
+
       // Return empty set if the caller doesn't want any for next/prev
       if (type !== 'all' && !(num > 0)) {
         return dates;
@@ -328,6 +332,10 @@
       var newDates = timeOfDay
         ? dates.map(function (d) { return d.add(timeOfDay, 'milliseconds'); })
         : dates;
+
+      if (type !== 'all' && num === 1) {
+        return newDates[0];
+      }
 
       return newDates;
     }
@@ -489,6 +497,17 @@
       this.from = null;
 
       return this;
+    };
+
+    Recur.prototype.hasRuleWithMeasure = function (measure) {
+      for (var i = 0; i < this.rules.length; i++) {
+        var rule = this.rules[i];
+        if (rule.measure === measure || rule.measure === pluralize(measure)) {
+          return true;
+        }
+      }
+
+      return false;
     };
 
     // Get/Set start date
